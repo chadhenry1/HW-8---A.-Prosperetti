@@ -1,0 +1,78 @@
+%{
+Chad Henry
+1170000
+MECE 5397 Computing
+2/21/2018
+
+Discritize the interval 0<x<L using N equally space points and write
+a code using the tri-diagonal formula to solve the Helmholtz equation
+
+Consider 2 cases:
+1. Dirichlet BC, given U(0), U(L), and u1(x)
+2. Mixed BC, given u'(0), u(L), and u2(x)
+
+Note: Start with a small number of nodes and increase N until the results
+are approximately the same. This shows grid convergence.
+
+Finally, calculate the order of accuracy using a given formula, OoA.
+%}
+clear all; clc;
+% constants
+N  = 10;       %number of elements, N+1 nodes exist
+k  = 10;      %use k = 10, 100 to see dependance differences
+u0 = 1;
+L  = 1;
+v  = 1;
+A  = 1;
+h  = L/N;
+a1 = 1;
+f1 = 1;
+
+ x = zeros(1,N+1);
+for p = 1:N+1
+    x(p) = (p-1)*h;
+end
+% given exact equations U1(x) and U2(x)
+ U1 = zeros(1,N+1); U2 = zeros(1,N+1);
+ for i = 1:N+1
+ U1(i) = (1-(sinh(k*(L-x(i)))+sinh(k*x(i)))/(sinh(k*L)))*(A/(k^2))...
+         + u0*(sinh(k*(L-x(i)))/sinh(k*L));
+ U2(i) = (1-(cosh(k*x(i))/cosh(k*L)))*(A/(k^2)) ...
+         - (v/k)*(sinh(k*(L-x(i)))/cosh(k*L));
+ end    
+%Boundary Conditions
+U1(1) = u0; U1(N+1) = 0;            %case 1
+%u2_prime(0) = v; U2(N+1) = 0;      %case 2
+U1
+U2
+
+% %Linear Appriximation
+% alpha = zeros(N,1);
+% alpha(1) = a1;
+% g(1) = f1;
+% 
+% a = zeros(N,1); b = zeros(N,1); c = zeros(N,1); f = zeros(N,1);
+% for j = 1:N
+%     a(j) = a(j) - (b(j)/(alpha(j-1))*c(j-1));
+%     f(j)  = f(j) - (b(j)/(alpha(j-1))*g(j-1));
+% end
+% 
+% U1 = zeros(N,1); g1 = zeros(N,1);
+% U1(N) = g1(N)/alpha(N);
+% for k = 1:(N-1)
+%     U1(N-k) = g1(N-k)-(c(N-k)*U1(N-k)/alpha(N-k));
+% end
+% 
+% U2 = zeros(N,1); g2 = zeros(N,1);
+% U2(N) = g2(N)/alpha(N);
+% for k = 1:(N-1)
+%     U2(N-k) = g2(N-k)-(c(N-k)*U2(N-k)/alpha(N-k));
+% end
+
+
+
+
+% %error calculation
+% OoA = log(Error(N)/Error(2*N))/log(2);
+% 
+
